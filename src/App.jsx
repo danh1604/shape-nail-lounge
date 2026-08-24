@@ -280,7 +280,7 @@ function App() {
       `}</style>
       <header className="header">
         <a className="logo" href="#top">
-          <img src="/logo.svg" alt="Shape Nail Lounge" />
+          <img src="/logo1.jpg" alt="Shape Nail Lounge" />
           <span>
             SHAPE <small>NAIL LOUNGE</small>
           </span>
@@ -412,8 +412,8 @@ function App() {
           </h2>
           <div className="gallery">
             <img
-              src="https://images.unsplash.com/photo-1610992015732-2449b76344bc?auto=format&fit=crop&w=700&q=85"
-              alt="Nude nail design"
+              src="/chan.png"
+              alt="Pedicure feet"
             />
             <img
               src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=900&q=85"
@@ -434,7 +434,7 @@ function App() {
               <i>at Shape.</i>
             </h2>
             <p>
-              24 Dang Huu Pho, Thao Dien
+              4457 School House Commons, Harrisburg, NC 28075
               <br />
               Monday — Sunday · 09:30 — 20:30
             </p>
@@ -446,7 +446,7 @@ function App() {
       </main>
       <footer>
         <a className="logo" href="#top">
-          <img src="/logo.svg" alt="Shape Nail Lounge" />
+          <img src="/logo1.jpg" alt="Shape Nail Lounge" />
           <span>
             SHAPE <small>NAIL LOUNGE</small>
           </span>
@@ -584,8 +584,17 @@ function App() {
       const appointmentDate =
         form.get("appointment_date")?.toString().trim() || "";
 
-      const serviceName =
+      const serviceSelection =
         form.get("service_name")?.toString().trim() || "";
+      const serviceSeparator = serviceSelection.lastIndexOf(" - ");
+      const serviceName =
+        serviceSeparator > -1
+          ? serviceSelection.slice(0, serviceSeparator)
+          : serviceSelection;
+      const servicePrice =
+        serviceSeparator > -1
+          ? serviceSelection.slice(serviceSeparator + 3)
+          : "Price varies";
 
       // ==========================================
       // 3. VALIDATE
@@ -627,6 +636,7 @@ function App() {
         customer_phone: customerPhone,
         appointment_date: appointmentDate,
         service_name: serviceName,
+        service_price: servicePrice,
 
         salon_email: emailConfig.VITE_SALON_EMAIL,
 
