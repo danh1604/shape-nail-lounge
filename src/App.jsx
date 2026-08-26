@@ -13,120 +13,120 @@ function App() {
     [
       "01",
       "SNS Full Set",
-      "SNS powder set with a natural, durable finish.",
+      "",
       "$45+",
       "Nail Care",
     ],
     [
       "02",
       "SNS Full Set with Removal",
-      "New SNS set including removal of existing product.",
+      "",
       "$50+",
       "Nail Care",
     ],
     [
       "03",
       "SNS Ombré",
-      "Soft ombré powder finish with a seamless blend.",
+      "",
       "$65+",
       "Nail Art",
     ],
     [
       "04",
       "Add Tips",
-      "Add length to any SNS powder service.",
+      "",
       "+$10",
       "Nail Care",
     ],
-    ["05", "French", "Classic French tip add-on.", "+$10", "Nail Art"],
+    ["05", "French", "", "+$10", "Nail Art"],
     [
       "06",
       "Manicure",
-      "Cut and shape, cuticle treatment and regular polish.",
+      "",
       "$25",
       "Nail Care",
     ],
     [
       "07",
       "Gel Manicure",
-      "Manicure finished with long-wear gel polish.",
+      "",
       "$40",
       "Nail Care",
     ],
     [
       "08",
       "Polish Change - Hands or Toes",
-      "Fresh regular polish on hands or toes.",
+      "",
       "$20",
       "Nail Care",
     ],
     [
       "09",
       "Gel Polish Change - Hands or Toes",
-      "Fresh gel color on hands or toes.",
+      "",
       "$30",
       "Nail Care",
     ],
     [
       "10",
       "Gel Take Off with Service",
-      "Removal when booking a new nail service.",
+      "",
       "$5",
       "Nail Care",
     ],
     [
       "11",
       "Gel Take Off without Service",
-      "Stand-alone gel removal.",
+      "",
       "$10",
       "Nail Care",
     ],
     [
       "12",
       "Full Set with Gel",
-      "Acrylic full set finished with gel color.",
+      "",
       "$55+",
       "Nail Care",
     ],
     [
       "13",
       "Acrylic Fill with Gel",
-      "Acrylic maintenance finished with gel color.",
+      "",
       "$45+",
       "Nail Care",
     ],
     [
       "14",
       "Acrylic Ombré",
-      "Blended acrylic ombré full set.",
+      "",
       "$70+",
       "Nail Art",
     ],
     [
       "15",
       "Gel-X Full Set",
-      "Soft gel extensions with a clean, light feel.",
+      "",
       "$65+",
       "Nail Care",
     ],
     [
       "16",
       "Gel-X Fill In",
-      "Maintenance service for existing Gel-X.",
+      "",
       "$55+",
       "Nail Care",
     ],
     [
       "17",
       "Builder Gel Full Set",
-      "Structured builder gel for strength and shape.",
+      "",
       "$60+",
       "Nail Care",
     ],
     [
       "18",
       "Builder Gel Fill In",
-      "Builder gel maintenance for natural nails.",
+      "",
       "$50+",
       "Nail Care",
     ],
@@ -161,55 +161,55 @@ function App() {
     [
       "23",
       "French Design",
-      "Fine French detail customized to your shape.",
+      "",
       "$10 - $20",
       "Nail Art",
     ],
-    ["24", "Chrome", "Reflective chrome finish.", "$20", "Nail Art"],
-    ["25", "Cat Eye", "Magnetic cat-eye gel effect.", "$20", "Nail Art"],
+    ["24", "Chrome", "", "$20", "Nail Art"],
+    ["25", "Cat Eye", "", "$20", "Nail Art"],
     [
       "26",
       "Custom Nail Art",
-      "Original design created for your look.",
+      "",
       "Price Varies",
       "Nail Art",
     ],
     [
       "27",
       "Kids Polish Change - Hands",
-      "Regular polish for children under 10.",
+      "",
       "$10",
       "Other",
     ],
     [
       "28",
       "Kids Gel Polish Change - Hands",
-      "Gel polish for children under 10.",
+      "",
       "$20",
       "Other",
     ],
     [
       "29",
       "Kids Classic Pedicure",
-      "Gentle classic pedicure for children under 10.",
+      "",
       "$30",
       "Other",
     ],
-    ["30", "Eyebrows", "Clean, shaped brows.", "$12", "Waxing"],
-    ["31", "Upper Lip", "Quick facial waxing service.", "$8", "Waxing"],
-    ["32", "Chin", "Quick facial waxing service.", "$10+", "Waxing"],
+    ["30", "Eyebrows", "", "$12", "Waxing"],
+    ["31", "Upper Lip", "", "$8", "Waxing"],
+    ["32", "Chin", "", "$10+", "Waxing"],
     [
       "33",
       "Face Combo",
-      "Eyebrows, upper lip and chin combo.",
+      "",
       "$40+",
       "Waxing",
     ],
-    ["34", "Underarms", "Smooth underarm waxing.", "$25", "Waxing"],
-    ["35", "Arms", "Half or full arm waxing.", "$30 / $40", "Waxing"],
-    ["36", "Legs", "Half or full leg waxing.", "$40 / $60", "Waxing"],
-    ["37", "Chest", "Chest waxing service.", "$30+", "Waxing"],
-    ["38", "Back", "Back waxing service.", "$50+", "Waxing"],
+    ["34", "Underarms", "", "$25", "Waxing"],
+    ["35", "Arms", "", "$30 / $40", "Waxing"],
+    ["36", "Legs", "", "$40 / $60", "Waxing"],
+    ["37", "Chest", "", "$30+", "Waxing"],
+    ["38", "Back", "", "$50+", "Waxing"],
   ];
   const visibleServices =
     filter === "All"
@@ -339,7 +339,7 @@ function App() {
               <i>to be loud to be seen.</i>
             </h2>
             <p>
-              Shape is a nail lounge for those who believe self-care should be a
+              Shape Nail Lounge is for those who believe self-care should be a
               ritual, not a rushed appointment. Every color and brushstroke is
               created slowly, thoughtfully and uniquely for you.
             </p>
@@ -397,7 +397,7 @@ function App() {
               <i>when you feel at ease.</i>
             </h2>
             <p>
-              No TV, no rush. Just a gentle playlist, a cup of tea and attentive
+              No TV, no rush. Just a gentle playlist, a glass of wine and attentive
               hands.
             </p>
             <span>✦ Salon-grade hygiene &nbsp; ✦ Curated products</span>
@@ -436,7 +436,11 @@ function App() {
             <p>
               4457 School House Commons, Harrisburg, NC 28075
               <br />
-              Monday — Sunday · 09:30 — 20:30
+              Mon — Fri · 09:30 AM — 7:00 PM
+              <br />
+              Sat · 10:00 AM — 6:00 PM
+              <br />
+              Sun · 11:00 AM — 5:00 PM
             </p>
           </div>
           <button className="light-button" onClick={() => setBookingOpen(true)}>
@@ -444,6 +448,17 @@ function App() {
           </button>
         </section>
       </main>
+      <a
+        className="hotline-button"
+        href="tel:+17042802159"
+        aria-label="Call Shape Nail Lounge at (704) 280-2159"
+      >
+        <span className="hotline-icon" aria-hidden="true">☎</span>
+        <span>
+          <small>HOTLINE</small>
+          <strong>(704) 280-2159</strong>
+        </span>
+      </a>
       <footer>
         <a className="logo" href="#top">
           <img src="/logo1.jpg" alt="Shape Nail Lounge" />

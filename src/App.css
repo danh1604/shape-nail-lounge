@@ -320,6 +320,51 @@
   background: var(--clay);
   color: #fff;
 }
+.hotline-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 17px 12px 13px;
+  border: 1px solid #ead7ae;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: var(--ink);
+  box-shadow: 0 10px 25px rgba(49, 40, 29, .18);
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.hotline-button:hover {
+  background: #f5e3b8;
+  box-shadow: 0 14px 30px rgba(49, 40, 29, .24);
+  transform: translateY(-3px);
+}
+.hotline-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--clay);
+  color: #fff;
+  font-size: 17px;
+}
+.hotline-button small,
+.hotline-button strong {
+  display: block;
+}
+.hotline-button small {
+  color: var(--olive);
+  font-size: 9px;
+  letter-spacing: .15em;
+}
+.hotline-button strong {
+  margin-top: 3px;
+  font-size: 12px;
+  letter-spacing: .04em;
+}
 footer {
   background: var(--ink);
   color: #e9e3d8;
@@ -474,6 +519,14 @@ footer small {
   }
   .contact .light-button {
     margin-top: 25px;
+  }
+  .hotline-button {
+    right: 16px;
+    bottom: 16px;
+    padding: 8px;
+  }
+  .hotline-button > span:last-child {
+    display: none;
   }
   footer {
     flex-wrap: wrap;
