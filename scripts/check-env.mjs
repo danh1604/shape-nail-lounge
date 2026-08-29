@@ -2,19 +2,30 @@ import { existsSync, readFileSync } from "node:fs";
 
 const requiredKeys = ["SALON_EMAIL", "BREVO_API_KEY"];
 
-if (!existsSync(".env")) {
-  console.error("Missing .env. Copy .env.example to .env before building.");
-  process.exit(1);
+if (existsSync(".env")) {
+  const envContent = readFileSync(".env", "utf8");
+
+  for (const line of envContent.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) {
+      continue;
+    }
+
+    const [key, ...rest] = trimmed.split("=");
+    const value = rest.join("=").trim();
+
+    if (!process.env[key] && value) {
+      process.env[key] = value;
+    }
+  }
 }
 
-const envContent = readFileSync(".env", "utf8");
-const missingKeys = requiredKeys.filter((key) => {
-  const match = envContent.match(new RegExp(`^${key}=(.*)$`, "m"));
-  return !match || !match[1].trim();
-});
+const missingKeys = requiredKeys.filter((key) => !process.env[key]?.trim());
 
 if (missingKeys.length > 0) {
-  console.error(`Missing Brevo settings in .env: ${missingKeys.join(", ")}`);
+  console.error(
+    `Missing Brevo settings in environment: ${missingKeys.join(", ")}`
+  );
   process.exit(1);
 }
 
