@@ -221,32 +221,6 @@ function App() {
     .toISOString()
     .slice(0, 16);
 
-  const minBookingDate = minBookingDateTime.slice(0, 10);
-
-  const bookingTimeOptions = [
-    { value: "09:00", label: "09:00 AM" },
-    { value: "09:30", label: "09:30 AM" },
-    { value: "10:00", label: "10:00 AM" },
-    { value: "10:30", label: "10:30 AM" },
-    { value: "11:00", label: "11:00 AM" },
-    { value: "11:30", label: "11:30 AM" },
-    { value: "12:00", label: "12:00 PM" },
-    { value: "12:30", label: "12:30 PM" },
-    { value: "13:00", label: "01:00 PM" },
-    { value: "13:30", label: "01:30 PM" },
-    { value: "14:00", label: "02:00 PM" },
-    { value: "14:30", label: "02:30 PM" },
-    { value: "15:00", label: "03:00 PM" },
-    { value: "15:30", label: "03:30 PM" },
-    { value: "16:00", label: "04:00 PM" },
-    { value: "16:30", label: "04:30 PM" },
-    { value: "17:00", label: "05:00 PM" },
-    { value: "17:30", label: "05:30 PM" },
-    { value: "18:00", label: "06:00 PM" },
-    { value: "18:30", label: "06:30 PM" },
-    { value: "19:00", label: "07:00 PM" },
-  ];
-
   return (
     <div className="site-shell" lang="en-US">
       <style>{`
@@ -605,11 +579,12 @@ function App() {
       const customerPhone =
         form.get("customer_phone")?.toString().trim() || "";
 
-      const appointmentDate =
-        form.get("appointment_date")?.toString().trim() || "";
+      const appointmentDateTime =
+        form.get("appointment_datetime")?.toString().trim() || "";
 
-      const appointmentTime =
-        form.get("appointment_time")?.toString().trim() || "";
+      const [appointmentDate, appointmentTime] = appointmentDateTime
+        ? appointmentDateTime.split("T")
+        : ["", ""];
 
       const serviceSelection =
         form.get("service_name")?.toString().trim() || "";
@@ -719,30 +694,14 @@ function App() {
   </div>
 
   <div className="booking-field-group">
-    <label htmlFor="appointment_date">Date</label>
+    <label htmlFor="appointment_datetime">Date & time</label>
     <input
-      id="appointment_date"
-      name="appointment_date"
-      type="date"
-      min={minBookingDate}
+      id="appointment_datetime"
+      name="appointment_datetime"
+      type="datetime-local"
+      min={minBookingDateTime}
       required
     />
-  </div>
-
-  <div className="booking-field-group">
-    <label htmlFor="appointment_time">Time</label>
-    <select
-      id="appointment_time"
-      name="appointment_time"
-      required
-    >
-      <option value="">Select time</option>
-      {bookingTimeOptions.map((slot) => (
-        <option key={slot.value} value={slot.value}>
-          {slot.label}
-        </option>
-      ))}
-    </select>
   </div>
 
   <div className="booking-field-group">
