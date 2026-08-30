@@ -395,44 +395,119 @@ footer small {
   padding: 20px;
 }
 .modal-card {
-  background: #faf8f4;
+  background: linear-gradient(180deg, #fffdf9 0%, #f9f4ed 100%);
   position: relative;
-  width: min(100%, 480px);
-  padding: 45px;
+  width: min(100%, 520px);
+  padding: 0 0 30px;
+  border: 1px solid rgba(49, 40, 29, 0.08);
+  overflow: hidden;
 }
 .modal-card h2 {
   font-size: 42px;
-  margin: 18px 0 28px;
+  margin: 10px 0 22px;
+  padding: 0 32px;
+}
+.booking-brand-bar {
+  background: linear-gradient(135deg, #31281d 0%, #4d3f31 100%);
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #fff;
+}
+.booking-brand-bar img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px;
+}
+.booking-brand-bar div {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.booking-brand-bar span {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #d8b66d;
+}
+.booking-brand-bar strong {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: 0.12em;
+}
+.booking-kicker {
+  padding: 0 32px;
+  margin-top: 26px;
 }
 .close {
   position: absolute;
   right: 18px;
-  top: 12px;
+  top: 18px;
   border: 0;
-  background: none;
+  background: rgba(49, 40, 29, 0.06);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   font-size: 28px;
-  color: #777;
+  color: #574e45;
   cursor: pointer;
 }
 .modal-card form {
   display: grid;
   gap: 16px;
+  padding: 0 32px;
+}
+.booking-field-group {
+  display: grid;
+  gap: 8px;
+}
+.booking-field-group label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7b6b59;
+  font-weight: 700;
 }
 .modal-card input,
 .modal-card select {
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  background: transparent;
-  padding: 12px 0;
+  border: 1px solid #e5d8c4;
+  background: rgba(255,255,255,0.45);
+  padding: 13px 14px;
   outline: 0;
+  color: var(--ink);
+  box-shadow: inset 0 1px 2px rgba(49, 40, 29, 0.02);
+}
+.modal-card input::placeholder {
+  color: #8a867e;
 }
 .modal-card input:focus,
 .modal-card select:focus {
   border-color: var(--clay);
+  box-shadow: 0 0 0 3px rgba(184, 138, 59, 0.13);
+}
+.booking-note {
+  margin: 0;
+  color: #72675f;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.booking-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+.form-error {
+  margin: 0;
+  color: #8c2f2f;
+  font-size: 13px;
+  line-height: 1.5;
 }
 .success {
   color: var(--clay);
   line-height: 1.7;
+  padding: 0 32px;
 }
 @media (max-width: 760px) {
   .header {

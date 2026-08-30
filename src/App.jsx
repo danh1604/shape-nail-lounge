@@ -215,6 +215,12 @@ function App() {
       ? services
       : services.filter((service) => service[4] === filter);
 
+  const minBookingDateTime = new Date(
+    Date.now() - new Date().getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .slice(0, 16);
+
   return (
     <div className="site-shell">
       <style>{`
@@ -537,7 +543,14 @@ function App() {
             <button className="close" onClick={() => setBookingOpen(false)}>
               ×
             </button>
-            <p className="kicker">YOUR MOMENT, YOUR WAY</p>
+            <div className="booking-brand-bar">
+              <img src="/logo1.jpg" alt="Shape Nail Lounge" />
+              <div>
+                <span>SHAPE</span>
+                <strong>NAIL LOUNGE</strong>
+              </div>
+            </div>
+            <p className="kicker booking-kicker">YOUR MOMENT, YOUR WAY</p>
             <h2>
               Book at <i>Shape.</i>
             </h2>
@@ -566,8 +579,12 @@ function App() {
       const customerPhone =
         form.get("customer_phone")?.toString().trim() || "";
 
-      const appointmentDate =
-        form.get("appointment_date")?.toString().trim() || "";
+      const appointmentDateTime =
+        form.get("appointment_datetime")?.toString().trim() || "";
+
+      const [appointmentDate, appointmentTime] = appointmentDateTime
+        ? appointmentDateTime.split("T")
+        : ["", ""];
 
       const serviceSelection =
         form.get("service_name")?.toString().trim() || "";
@@ -597,11 +614,16 @@ function App() {
         throw new Error("Please select an appointment date.");
       }
 
+      if (!appointmentTime) {
+        throw new Error("Please select an appointment time.");
+      }
+
       console.log("================================");
       console.log("BOOKING EMAIL VIA BACKEND BREVO");
       console.log("Customer:", customerName);
       console.log("Customer email:", customerEmail);
       console.log("Date:", appointmentDate);
+      console.log("Time:", appointmentTime);
       console.log("Service:", serviceName);
       console.log("================================");
 
@@ -615,6 +637,7 @@ function App() {
           customer_email: customerEmail,
           customer_phone: customerPhone,
           appointment_date: appointmentDate,
+          appointment_time: appointmentTime,
           service_name: serviceName,
           service_price: servicePrice,
         }),
@@ -638,53 +661,73 @@ function App() {
     }
   }}
 >
-  <input
-    name="customer_name"
-    placeholder="Full name"
-    required
-  />
+  <div className="booking-field-group">
+    <label htmlFor="customer_name">Full name</label>
+    <input
+      id="customer_name"
+      name="customer_name"
+      placeholder="Your full name"
+      required
+    />
+  </div>
 
-  <input
-    name="customer_email"
-    type="email"
-    placeholder="Customer email"
-    required
-  />
+  <div className="booking-field-group">
+    <label htmlFor="customer_email">Email</label>
+    <input
+      id="customer_email"
+      name="customer_email"
+      type="email"
+      placeholder="you@example.com"
+      required
+    />
+  </div>
 
-  <input
-    name="customer_phone"
-    type="tel"
-    placeholder="Phone number"
-    required
-  />
+  <div className="booking-field-group">
+    <label htmlFor="customer_phone">Phone number</label>
+    <input
+      id="customer_phone"
+      name="customer_phone"
+      type="tel"
+      placeholder="(704) 000-0000"
+      required
+    />
+  </div>
 
-  <input
-    name="appointment_date"
-    type="date"
-    min={new Date().toISOString().split("T")[0]}
-    required
-  />
+  <div className="booking-field-group">
+    <label htmlFor="appointment_datetime">Date & time</label>
+    <input
+      id="appointment_datetime"
+      name="appointment_datetime"
+      type="datetime-local"
+      min={minBookingDateTime}
+      required
+    />
+  </div>
 
-  <select
-    name="service_name"
-    required
-  >
-    <option value="Classic Spa Pedicure - $40">
-      Classic Spa Pedicure - $40
-    </option>
+  <div className="booking-field-group">
+    <label htmlFor="service_name">Service</label>
+    <select
+      id="service_name"
+      name="service_name"
+      required
+    >
+      <option value="Classic Spa Pedicure - $40">
+        Classic Spa Pedicure - $40
+      </option>
 
-    <option value="Gel Manicure - $40">
-      Gel Manicure - $40
-    </option>
+      <option value="Gel Manicure - $40">
+        Gel Manicure - $40
+      </option>
 
-    <option value="SNS Full Set - $45+">
-      SNS Full Set - $45+
-    </option>
+      <option value="SNS Full Set - $45+">
+        SNS Full Set - $45+
+      </option>
 
-    <option value="Custom Nail Art - Price Varies">
-      Custom Nail Art - Price Varies
-    </option>
-  </select>
+      <option value="Custom Nail Art - Price Varies">
+        Custom Nail Art - Price Varies
+      </option>
+    </select>
+  </div>
 
   {bookingError && (
     <p className="form-error">
@@ -692,9 +735,13 @@ function App() {
     </p>
   )}
 
+  <p className="booking-note">
+    We’ll send a reminder 2 hours before your appointment.
+  </p>
+
   <button
     type="submit"
-    className="dark-button"
+    className="dark-button booking-submit"
     disabled={sending}
   >
     {sending
