@@ -22,13 +22,17 @@ const getBrevoErrorMessage = async (response, senderEmail) => {
     ) ||
     senderEmail?.toLowerCase().includes("gmail.com") ||
     senderEmail?.toLowerCase().includes("yahoo.com") ||
-    senderEmail?.toLowerCase().includes("outlook.com")
+    senderEmail?.toLowerCase().includes("outlook.com") ||
+    senderEmail?.toLowerCase().includes("hotmail.com") ||
+    senderEmail?.toLowerCase().includes("icloud.com")
   ) {
-    return `${rawMessage}. Please verify the sender email in Brevo > Settings > Senders & Domains and restart the server after updating SALON_EMAIL in .env. Current sender: ${senderEmail || "not set"}.`;
+    return `${rawMessage}. Please verify the sender email in Brevo > Settings > Senders & Domains and restart the server after updating SALON_EMAIL in .env. Use a business email from your own domain, not Gmail/Outlook/Yahoo. Current sender: ${senderEmail || "not set"}.`;
   }
 
   return rawMessage;
 };
+
+const isPublicSenderEmail = (email) => /@(gmail|yahoo|outlook|hotmail|icloud|live|protonmail)\.(com|net)$/i.test(email || "");
 
 const sendEmail = async ({
   apiKey,
@@ -199,6 +203,7 @@ app.post("/api/booking", async (req, res) => {
       customer_name,
       customer_email,
       customer_phone,
+      customer_note,
       appointment_date,
       appointment_time,
       appointment_datetime,
@@ -238,6 +243,12 @@ app.post("/api/booking", async (req, res) => {
       });
     }
 
+    if (isPublicSenderEmail(salonEmail)) {
+      return res.status(500).json({
+        message: "SALON_EMAIL must be a verified business email from your own domain. Gmail/Outlook/Yahoo are not valid sender addresses for Brevo production setup.",
+      });
+    }
+
     const appointmentDateTime = `${finalAppointmentDate} at ${finalAppointmentTime}`;
     const customerTemplateId = Number(
       process.env.BREVO_CUSTOMER_TEMPLATE_ID || process.env.BREVO_TEMPLATE_ID || 0
@@ -255,6 +266,7 @@ app.post("/api/booking", async (req, res) => {
       service_price: service_price || "Price varies",
       salon_name: "Shape Nail Lounge",
       shop_logo_url: shopLogoUrl,
+      customer_note: customer_note || "No additional notes",
     };
 
     const salonParams = {
@@ -266,6 +278,7 @@ app.post("/api/booking", async (req, res) => {
       service_price: service_price || "Price varies",
       salon_name: "Shape Nail Lounge",
       shop_logo_url: shopLogoUrl,
+      customer_note: customer_note || "No additional notes",
     };
 
     await sendEmail({
@@ -297,6 +310,7 @@ app.post("/api/booking", async (req, res) => {
                 <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong style="color:#31281d;">Date:</strong> ${appointmentDateTime}</p>
                 <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong style="color:#31281d;">Service:</strong> ${service_name}</p>
                 <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong style="color:#31281d;">Price:</strong> ${service_price || "Price varies"}</p>
+                <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong style="color:#31281d;">Note:</strong> ${customer_note || "No additional notes"}</p>
               </div>
 
               <p style="margin:0 0 14px;color:#5e564d;font-size:15px;line-height:1.7;">
@@ -348,6 +362,7 @@ app.post("/api/booking", async (req, res) => {
                 <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong>Date:</strong> ${appointmentDateTime}</p>
                 <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong>Service:</strong> ${service_name}</p>
                 <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong>Price:</strong> ${service_price || "Price varies"}</p>
+                <p style="margin:6px 0;color:#31281d;font-size:15px;"><strong>Note:</strong> ${customer_note || "No additional notes"}</p>
               </div>
             </div>
           </div>

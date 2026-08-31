@@ -29,4 +29,16 @@ if (missingKeys.length > 0) {
   process.exit(1);
 }
 
+const salonEmail = process.env.SALON_EMAIL || "";
+const isPublicEmail = /@(gmail|yahoo|outlook|hotmail|icloud|live|protonmail)\.com$/i.test(
+  salonEmail
+);
+
+if (isPublicEmail) {
+  console.error(
+    "SALON_EMAIL must be a verified business email from your own domain (for example hello@shapenailounge.com). Gmail/Outlook/Yahoo are not valid sender addresses for Brevo production setup."
+  );
+  process.exit(1);
+}
+
 console.log("Brevo environment is ready.");

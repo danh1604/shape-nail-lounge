@@ -8,6 +8,8 @@ function App() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [bookingError, setBookingError] = useState("");
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const bookingEndpoint = `${apiBaseUrl}/api/booking`;
   const services = [
     [
       "01",
@@ -431,22 +433,14 @@ function App() {
           </div>
         </section>
         <section className="contact" id="contact">
-          <div>
+          <div className="contact-copy">
             <p className="kicker">COME SAY HELLO</p>
             <h2>
               See you
               <br />
               <i>at Shape.</i>
             </h2>
-            <p>
-              4457 School House Commons, Harrisburg, NC 28075
-              <br />
-              Mon — Fri · 09:30 AM — 7:00 PM
-              <br />
-              Sat · 10:00 AM — 6:00 PM
-              <br />
-              Sun · 11:00 AM — 5:00 PM
-            </p>
+           
           </div>
           <button className="light-button" onClick={() => setBookingOpen(true)}>
             Book your appointment ↗
@@ -465,74 +459,66 @@ function App() {
         </span>
       </a>
       <footer>
-        <a className="logo" href="#top">
-          <img src="/logo1.jpg" alt="Shape Nail Lounge" />
-          <span>
-            SHAPE <small>NAIL LOUNGE</small>
-          </span>
-        </a>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            maxWidth: "300px",
-            lineHeight: 1.5,
-          }}
-        >
-          <strong
+        <div className="footer-inner">
+          <a className="logo" href="#top">
+            <img src="/logo1.jpg" alt="Shape Nail Lounge" />
+            <span>
+              SHAPE <small>NAIL LOUNGE</small>
+            </span>
+          </a>
+
+          <div className="footer-contact">
+            <strong className="footer-label">GET IN TOUCH</strong>
+            <p className="contact-address">
+              4457 School House Commons, Harrisburg, NC 28075
+            </p>
+            <div className="contact-hours">
+              <span>Mon — Fri · 09:30 AM — 7:00 PM</span>
+              <span>Sat · 10:00 AM — 6:00 PM</span>
+              <span>Sun · 11:00 AM — 5:00 PM</span>
+            </div>
+            <a
+              href="https://maps.app.goo.gl/udp5u1Hg6d4HiBdz7"
+              target="_blank"
+              rel="noreferrer"
+              className="footer-direction"
+            >
+              GET DIRECTIONS ↗
+            </a>
+            <a href="tel:+17042802159" className="footer-phone">
+              Phone - WhatsApp: (704) 280-2159
+            </a>
+          </div>
+
+          <div
+            className="footer-map"
             style={{
-              color: "#d8b66d",
-              fontSize: "10px",
-              letterSpacing: ".18em",
+              width: "clamp(280px, 42vw, 420px)",
+              height: "220px",
+              overflow: "hidden",
+              border: "1px solid #62513b",
+              borderRadius: "4px",
+              background: "#51432f",
             }}
           >
-            GET IN TOUCH
-          </strong>
-          <a
-            href="https://maps.app.goo.gl/udp5u1Hg6d4HiBdz7"
-            target="_blank"
-            rel="noreferrer"
-          >
-            4457 School House Commons, Harrisburg, NC 28075
-          </a>
-          <a
-            href="https://maps.app.goo.gl/udp5u1Hg6d4HiBdz7"
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "#d8b66d", fontSize: "10px", letterSpacing: ".12em" }}
-          >
-            GET DIRECTIONS ↗
-          </a>
-          <a href="tel:+17042802159">Phone - WhatsApp: (704) 280-2159</a>
+            <iframe
+              title="Shape Nail Lounge location map"
+              src="https://www.google.com/maps?q=4457+School+House+Commons,+Harrisburg,+NC+28075&output=embed"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              style={{
+                width: "100%",
+                height: "100%",
+                border: 0,
+                display: "block",
+                filter: "sepia(.2) saturate(.8)",
+              }}
+            />
+          </div>
         </div>
-        <div
-          style={{
-            width: "clamp(280px, 42vw, 420px)",
-            height: "220px",
-            overflow: "hidden",
-            border: "1px solid #62513b",
-            borderRadius: "4px",
-            background: "#51432f",
-          }}
-        >
-          <iframe
-            title="Shape Nail Lounge location map"
-            src="https://www.google.com/maps?q=4457+School+House+Commons,+Harrisburg,+NC+28075&output=embed"
-            loading="lazy"
-            allowFullScreen
-            referrerPolicy="no-referrer-when-downgrade"
-            style={{
-              width: "100%",
-              height: "100%",
-              border: 0,
-              display: "block",
-              filter: "sepia(.2) saturate(.8)",
-            }}
-          />
-        </div>
-        <p>Discover your signature beauty.</p>
-        <small>© 2026 Shape Nail Lounge</small>
+
+        <small className="footer-copyright">© 2026 Shape Nail Lounge</small>
       </footer>
       {bookingOpen && (
         <div className="modal" onClick={() => setBookingOpen(false)}>
@@ -579,6 +565,9 @@ function App() {
       const customerPhone =
         form.get("customer_phone")?.toString().trim() || "";
 
+      const customerNote =
+        form.get("customer_note")?.toString().trim() || "";
+
       const appointmentDateTime =
         form.get("appointment_datetime")?.toString().trim() || "";
 
@@ -618,6 +607,10 @@ function App() {
         throw new Error("Please select an appointment time.");
       }
 
+      if (!serviceSelection) {
+        throw new Error("Please select a service.");
+      }
+
       console.log("================================");
       console.log("BOOKING EMAIL VIA BACKEND BREVO");
       console.log("Customer:", customerName);
@@ -627,7 +620,7 @@ function App() {
       console.log("Service:", serviceName);
       console.log("================================");
 
-      const response = await fetch("/api/booking", {
+      const response = await fetch(bookingEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -636,6 +629,7 @@ function App() {
           customer_name: customerName,
           customer_email: customerEmail,
           customer_phone: customerPhone,
+          customer_note: customerNote,
           appointment_date: appointmentDate,
           appointment_time: appointmentTime,
           service_name: serviceName,
@@ -699,6 +693,8 @@ function App() {
       id="appointment_datetime"
       name="appointment_datetime"
       type="datetime-local"
+      lang="en-US"
+      locale="en-US"
       min={minBookingDateTime}
       required
     />
@@ -709,24 +705,26 @@ function App() {
     <select
       id="service_name"
       name="service_name"
+      defaultValue=""
       required
     >
-      <option value="Classic Spa Pedicure - $40">
-        Classic Spa Pedicure - $40
-      </option>
-
-      <option value="Gel Manicure - $40">
-        Gel Manicure - $40
-      </option>
-
-      <option value="SNS Full Set - $45+">
-        SNS Full Set - $45+
-      </option>
-
-      <option value="Custom Nail Art - Price Varies">
-        Custom Nail Art - Price Varies
-      </option>
+      <option value="">Select a service</option>
+      {services.map(([number, name, description, price]) => (
+        <option key={`${name}-${number}`} value={`${name} - ${price}`}>
+          {name} - {price}
+        </option>
+      ))}
     </select>
+  </div>
+
+  <div className="booking-field-group">
+    <label htmlFor="customer_note">Additional note</label>
+    <textarea
+      id="customer_note"
+      name="customer_note"
+      rows="4"
+      placeholder="Tell us any details, preferred style, or special requests..."
+    />
   </div>
 
   {bookingError && (
