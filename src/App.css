@@ -10,7 +10,7 @@
   width: 100%;
 }
 .site-shell {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 .header {
   height: 82px;
