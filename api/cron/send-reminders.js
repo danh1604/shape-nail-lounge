@@ -35,30 +35,16 @@ export default async function handler(req, res) {
     const now = new Date();
     const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
-    const pendingReminders = await db
+    const allPending = await db
       .collection("appointments")
-      .find({
-        reminder_sent: false,
-        $expr: {
-          $lte: [
-            {
-              $dateAdd: {
-                startDate: {
-                  $dateFromString: {
-                    dateString: {
-                      $concat: ["$appointment_date", "T", "$appointment_time", ":00"],
-                    },
-                  },
-                },
-                unit: "hour",
-                amount: -2,
-              },
-            },
-            twoHoursLater,
-          ],
-        },
-      })
+      .find({ reminder_sent: false })
       .toArray();
+
+    const pendingReminders = allPending.filter((appt) => {
+      const apptDateTime = new Date(`${appt.appointment_date}T${appt.appointment_time}:00`);
+      const reminderAt = new Date(apptDateTime.getTime() - 2 * 60 * 60 * 1000);
+      return reminderAt <= twoHoursLater;
+    });
 
     let sent = 0;
     for (const appt of pendingReminders) {
