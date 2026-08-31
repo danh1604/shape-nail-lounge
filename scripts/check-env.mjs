@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 
-const requiredKeys = ["SALON_EMAIL", "BREVO_API_KEY"];
+const requiredKeys = ["SENDER_EMAIL", "SALON_EMAIL", "BREVO_API_KEY"];
 
 if (existsSync(".env")) {
   const envContent = readFileSync(".env", "utf8");
@@ -29,14 +29,14 @@ if (missingKeys.length > 0) {
   process.exit(1);
 }
 
-const salonEmail = process.env.SALON_EMAIL || "";
+const senderEmail = process.env.SENDER_EMAIL || "";
 const isPublicEmail = /@(gmail|yahoo|outlook|hotmail|icloud|live|protonmail)\.com$/i.test(
-  salonEmail
+  senderEmail
 );
 
 if (isPublicEmail) {
   console.error(
-    "SALON_EMAIL must be a verified business email from your own domain (for example hello@shapenailounge.com). Gmail/Outlook/Yahoo are not valid sender addresses for Brevo production setup."
+    "SENDER_EMAIL must be a verified business email from your own domain (for example hello@shapenailounge.com). Gmail/Outlook/Yahoo are not valid sender addresses for Brevo production setup."
   );
   process.exit(1);
 }

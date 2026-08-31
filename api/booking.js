@@ -21,7 +21,7 @@ const getBrevoErrorMessage = async (response, senderEmail) => {
 
 const sendEmail = async ({
   apiKey,
-  salonEmail,
+  senderEmail,
   to,
   replyTo,
   subject,
@@ -32,7 +32,7 @@ const sendEmail = async ({
   const payload = {
     sender: {
       name: "Shape Nail Lounge",
-      email: salonEmail,
+      email: senderEmail,
     },
     to,
     replyTo: replyTo
@@ -57,7 +57,7 @@ const sendEmail = async ({
   });
 
   if (!response.ok) {
-    throw new Error(await getBrevoErrorMessage(response, salonEmail));
+    throw new Error(await getBrevoErrorMessage(response, senderEmail));
   }
 };
 
@@ -68,7 +68,8 @@ const scheduleReminder = async ({
   appointment_time,
   service_name,
   apiKey,
-  salonEmail,
+  senderEmail,
+  salonContactEmail,
 }) => {
   const appointmentDateTime = new Date(`${appointment_date}T${appointment_time}:00`);
   const reminderAt = new Date(appointmentDateTime.getTime() - 2 * 60 * 60 * 1000);
@@ -110,9 +111,9 @@ const scheduleReminder = async ({
 
       await sendEmail({
         apiKey,
-        salonEmail,
+        senderEmail,
         to: [{ email: customer_email, name: customer_name }],
-        replyTo: { email: salonEmail, name: "Shape Nail Lounge" },
+        replyTo: { email: salonContactEmail, name: "Shape Nail Lounge" },
         subject: "Appointment Reminder - Shape Nail Lounge",
         htmlContent: reminderTemplateId ? undefined : reminderHtml,
         templateId: reminderTemplateId || undefined,
@@ -163,12 +164,13 @@ export default async function handler(req, res) {
     const finalAppointmentDate = parsedDate;
     const finalAppointmentTime = parsedTime;
     const apiKey = process.env.BREVO_API_KEY;
-    const salonEmail = process.env.SALON_EMAIL;
+    const senderEmail = process.env.SENDER_EMAIL;
+    const salonContactEmail = process.env.SALON_EMAIL;
     const shopLogoUrl =
       process.env.SHOP_LOGO_URL ||
       "https://img.mailinblue.com/11962144/images/content_library/original/6a93ae97ef18b433911b0deb.jpg";
 
-    if (!apiKey || !salonEmail) {
+    if (!apiKey || !senderEmail || !salonContactEmail) {
       return res.status(500).json({
         message: "Brevo configuration is missing.",
       });
@@ -204,9 +206,9 @@ export default async function handler(req, res) {
 
     await sendEmail({
       apiKey,
-      salonEmail,
+      senderEmail,
       to: [{ email: customer_email, name: customer_name }],
-      replyTo: { email: salonEmail, name: "Shape Nail Lounge" },
+      replyTo: { email: salonContactEmail, name: "Shape Nail Lounge" },
       subject: "Appointment Confirmation - Shape Nail Lounge",
       htmlContent: customerTemplateId ? undefined : `
         <div style="background:#f7f1e7;padding:32px 0;font-family:Arial,Helvetica,sans-serif;color:#31281d;">
@@ -256,8 +258,8 @@ export default async function handler(req, res) {
 
     await sendEmail({
       apiKey,
-      salonEmail,
-      to: [{ email: salonEmail, name: "Shape Nail Lounge" }],
+      senderEmail,
+      to: [{ email: salonContactEmail, name: "Shape Nail Lounge" }],
       replyTo: { email: customer_email, name: customer_name },
       subject: `New appointment request from ${customer_name}`,
       htmlContent: salonTemplateId ? undefined : `
@@ -298,7 +300,8 @@ export default async function handler(req, res) {
       appointment_time: finalAppointmentTime,
       service_name,
       apiKey,
-      salonEmail,
+      senderEmail,
+      salonContactEmail,
     });
 
     return res.status(200).json({
