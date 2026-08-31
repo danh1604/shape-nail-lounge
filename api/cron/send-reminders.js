@@ -33,7 +33,6 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
 
     const now = new Date();
-    const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
     const allPending = await db
       .collection("appointments")
@@ -43,7 +42,7 @@ export default async function handler(req, res) {
     const pendingReminders = allPending.filter((appt) => {
       const apptDateTime = new Date(`${appt.appointment_date}T${appt.appointment_time}:00`);
       const reminderAt = new Date(apptDateTime.getTime() - 2 * 60 * 60 * 1000);
-      return reminderAt <= twoHoursLater;
+      return reminderAt <= now;
     });
 
     let sent = 0;
