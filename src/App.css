@@ -339,6 +339,7 @@
   bottom: 24px;
   z-index: 4;
   display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 .fab-book,
@@ -715,8 +716,8 @@ footer .logo small {
     right: 16px;
     bottom: 16px;
   }
-  .fab-book span:last-child,
-  .fab-phone span:last-child {
+  .fab-book > span:last-child,
+  .fab-phone > span:last-child {
     display: none;
   }
   .fab-book,
