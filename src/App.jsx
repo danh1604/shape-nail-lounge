@@ -529,209 +529,224 @@ function App() {
             <button className="close" onClick={() => setBookingOpen(false)}>
               ×
             </button>
-            <div className="booking-brand-bar">
-              <img src="/logo1.jpg" alt="Shape Nail Lounge" />
-              <div>
-                <span>SHAPE</span>
-                <strong>NAIL LOUNGE</strong>
+            <div className="modal-header">
+              <div className="booking-brand-bar">
+                <img src="/logo1.jpg" alt="Shape Nail Lounge" />
+                <div>
+                  <span>SHAPE</span>
+                  <strong>NAIL LOUNGE</strong>
+                </div>
               </div>
+              <p className="kicker booking-kicker">YOUR MOMENT, YOUR WAY</p>
+              <h2>
+                Book at <i>Shape.</i>
+              </h2>
             </div>
-            <p className="kicker booking-kicker">YOUR MOMENT, YOUR WAY</p>
-            <h2>
-              Book at <i>Shape.</i>
-            </h2>
             {sent ? (
               <p className="success">
                 Thank you. A confirmation email has been sent to your inbox.
               </p>
             ) : (
-              <form
-  onSubmit={async (event) => {
-    event.preventDefault();
+              <>
+                <form
+                  className="modal-body"
+                  onSubmit={async (event) => {
+                    event.preventDefault();
 
-    setSending(true);
-    setBookingError("");
-    setSent(false);
+                    setSending(true);
+                    setBookingError("");
+                    setSent(false);
 
-    const form = new FormData(event.currentTarget);
+                    const form = new FormData(event.currentTarget);
 
-    try {
-      const customerName =
-        form.get("customer_name")?.toString().trim() || "";
+                    try {
+                      const customerName =
+                        form.get("customer_name")?.toString().trim() || "";
 
-      const customerEmail =
-        form.get("customer_email")?.toString().trim() || "";
+                      const customerEmail =
+                        form.get("customer_email")?.toString().trim() || "";
 
-      const customerPhone =
-        form.get("customer_phone")?.toString().trim() || "";
+                      const customerPhone =
+                        form.get("customer_phone")?.toString().trim() || "";
 
-      const customerNote =
-        form.get("customer_note")?.toString().trim() || "";
+                      const customerNote =
+                        form.get("customer_note")?.toString().trim() || "";
 
-      const appointmentDateTime =
-        form.get("appointment_datetime")?.toString().trim() || "";
+                      const appointmentDateTime =
+                        form.get("appointment_datetime")?.toString().trim() || "";
 
-      const [appointmentDate, appointmentTime] = appointmentDateTime
-        ? appointmentDateTime.split("T")
-        : ["", ""];
+                      const [appointmentDate, appointmentTime] = appointmentDateTime
+                        ? appointmentDateTime.split("T")
+                        : ["", ""];
 
-      const serviceSelection =
-        form.get("service_name")?.toString().trim() || "";
-      const serviceSeparator = serviceSelection.lastIndexOf(" - ");
-      const serviceName =
-        serviceSeparator > -1
-          ? serviceSelection.slice(0, serviceSeparator)
-          : serviceSelection;
-      const servicePrice =
-        serviceSeparator > -1
-          ? serviceSelection.slice(serviceSeparator + 3)
-          : "Price varies";
+                      const serviceSelection =
+                        form.get("service_name")?.toString().trim() || "";
+                      const serviceSeparator = serviceSelection.lastIndexOf(" - ");
+                      const serviceName =
+                        serviceSeparator > -1
+                          ? serviceSelection.slice(0, serviceSeparator)
+                          : serviceSelection;
+                      const servicePrice =
+                        serviceSeparator > -1
+                          ? serviceSelection.slice(serviceSeparator + 3)
+                          : "Price varies";
 
-      if (!customerName) {
-        throw new Error("Please enter the customer's name.");
-      }
+                      if (!customerName) {
+                        throw new Error("Please enter the customer's name.");
+                      }
 
-      if (!customerEmail) {
-        throw new Error("Please enter the customer's email.");
-      }
+                      if (!customerEmail) {
+                        throw new Error("Please enter the customer's email.");
+                      }
 
-      if (!customerPhone) {
-        throw new Error("Please enter a phone number.");
-      }
+                      if (!customerPhone) {
+                        throw new Error("Please enter a phone number.");
+                      }
 
-      if (!appointmentDate) {
-        throw new Error("Please select an appointment date.");
-      }
+                      if (!appointmentDate) {
+                        throw new Error("Please select an appointment date.");
+                      }
 
-      if (!appointmentTime) {
-        throw new Error("Please select an appointment time.");
-      }
+                      if (!appointmentTime) {
+                        throw new Error("Please select an appointment time.");
+                      }
 
-      if (!serviceSelection) {
-        throw new Error("Please select a service.");
-      }
+                      if (!serviceSelection) {
+                        throw new Error("Please select a service.");
+                      }
 
-      console.log("================================");
-      console.log("BOOKING EMAIL VIA BACKEND BREVO");
-      console.log("Customer:", customerName);
-      console.log("Customer email:", customerEmail);
-      console.log("Date:", appointmentDate);
-      console.log("Time:", appointmentTime);
-      console.log("Service:", serviceName);
-      console.log("================================");
+                      const response = await fetch(bookingEndpoint, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          customer_name: customerName,
+                          customer_email: customerEmail,
+                          customer_phone: customerPhone,
+                          customer_note: customerNote,
+                          appointment_date: appointmentDate,
+                          appointment_time: appointmentTime,
+                          service_name: serviceName,
+                          service_price: servicePrice,
+                        }),
+                      });
 
-      const response = await fetch(bookingEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customer_name: customerName,
-          customer_email: customerEmail,
-          customer_phone: customerPhone,
-          customer_note: customerNote,
-          appointment_date: appointmentDate,
-          appointment_time: appointmentTime,
-          service_name: serviceName,
-          service_price: servicePrice,
-        }),
-      });
+                      const data = await response.json().catch(() => ({}));
 
-      const data = await response.json().catch(() => ({}));
+                      if (!response.ok) {
+                        throw new Error(data?.message || "Unable to send booking request.");
+                      }
 
-      if (!response.ok) {
-        throw new Error(data?.message || "Unable to send booking request.");
-      }
+                      setSent(true);
+                    } catch (error) {
+                      setBookingError(
+                        `Unable to send email: ${error?.message || "Brevo did not return error details."}`
+                      );
+                    } finally {
+                      setSending(false);
+                    }
+                  }}
+                >
+                  <div className="booking-field-group">
+                    <label htmlFor="customer_name">Full name</label>
+                    <input
+                      id="customer_name"
+                      name="customer_name"
+                      placeholder="Your full name"
+                      required
+                    />
+                  </div>
 
-      console.log("🎉 BOOKING EMAIL COMPLETE");
-      setSent(true);
-    } catch (error) {
-      console.error("❌ BREVO BOOKING ERROR:", error);
-      setBookingError(
-        `Unable to send email: ${error?.message || "Brevo did not return error details."}`
-      );
-    } finally {
-      setSending(false);
-    }
-  }}
->
-  <div className="booking-field-group">
-    <label htmlFor="customer_name">Full name</label>
-    <input
-      id="customer_name"
-      name="customer_name"
-      placeholder="Your full name"
-      required
-    />
-  </div>
+                  <div className="booking-field-group">
+                    <label htmlFor="customer_email">Email</label>
+                    <input
+                      id="customer_email"
+                      name="customer_email"
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
 
-  <div className="booking-field-group">
-    <label htmlFor="customer_email">Email</label>
-    <input
-      id="customer_email"
-      name="customer_email"
-      type="email"
-      placeholder="you@example.com"
-      required
-    />
-  </div>
+                  <div className="booking-field-group">
+                    <label htmlFor="customer_phone">Phone number</label>
+                    <input
+                      id="customer_phone"
+                      name="customer_phone"
+                      type="tel"
+                      placeholder="(704) 000-0000"
+                      required
+                    />
+                  </div>
 
-  <div className="booking-field-group">
-    <label htmlFor="customer_phone">Phone number</label>
-    <input
-      id="customer_phone"
-      name="customer_phone"
-      type="tel"
-      placeholder="(704) 000-0000"
-      required
-    />
-  </div>
+                  <div className="booking-field-group">
+                    <label htmlFor="appointment_datetime">Date & time</label>
+                    <input
+                      id="appointment_datetime"
+                      name="appointment_datetime"
+                      type="datetime-local"
+                      lang="en-US"
+                      locale="en-US"
+                      min={minBookingDateTime}
+                      required
+                    />
+                  </div>
 
-  <div className="booking-field-group">
-    <label htmlFor="appointment_datetime">Date & time</label>
-    <input
-      id="appointment_datetime"
-      name="appointment_datetime"
-      type="datetime-local"
-      lang="en-US"
-      locale="en-US"
-      min={minBookingDateTime}
-      required
-    />
-  </div>
+                  <div className="booking-field-group">
+                    <label htmlFor="service_name">Service</label>
+                    <select
+                      id="service_name"
+                      name="service_name"
+                      defaultValue=""
+                      required
+                    >
+                      <option value="">Select a service</option>
+                      {services.map(([number, name, description, price]) => (
+                        <option key={`${name}-${number}`} value={`${name} - ${price}`}>
+                          {name} - {price}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-  <div className="booking-field-group">
-    <label htmlFor="service_name">Service</label>
-    <select
-      id="service_name"
-      name="service_name"
-      defaultValue=""
-      required
-    >
-      <option value="">Select a service</option>
-      {services.map(([number, name, description, price]) => (
-        <option key={`${name}-${number}`} value={`${name} - ${price}`}>
-          {name} - {price}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div className="booking-field-group">
-    <label htmlFor="customer_note">Additional note</label>
-    <textarea
-      id="customer_note"
-      name="customer_note"
-      rows="4"
-      placeholder="Tell us any details, preferred style, or special requests..."
-    />
-  </div>
-
-  {bookingError && (
-    <p className="form-error">
-      {bookingError}
-    </p>
-  )}
+                  <div className="booking-field-group">
+                    <label htmlFor="customer_note">Additional note</label>
+                    <textarea
+                      id="customer_note"
+                      name="customer_note"
+                      rows="4"
+                      placeholder="Tell us any details, preferred style, or special requests..."
+                    />
+                  </div>
+                </form>
+                <div className="modal-footer">
+                  {bookingError && (
+                    <p className="form-error">
+                      {bookingError}
+                    </p>
+                  )}
+                  <p className="booking-note">
+                    We'll send a reminder 2 hours before your appointment.
+                  </p>
+                  <button
+                    type="submit"
+                    className="dark-button booking-submit"
+                    disabled={sending}
+                    onClick={() => {
+                      document.querySelector('.modal-body')?.requestSubmit();
+                    }}
+                  >
+                    {sending
+                      ? "Sending..."
+                      : "Submit request ↗"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
   <p className="booking-note">
     We’ll send a reminder 2 hours before your appointment.

@@ -467,16 +467,35 @@ footer .logo small {
   display: grid;
   place-items: center;
   padding: 20px;
-  overflow-y: auto;
 }
 .modal-card {
   background: linear-gradient(180deg, #fffdf9 0%, #f9f4ed 100%);
   position: relative;
   width: min(100%, 520px);
   max-height: calc(100vh - 40px);
-  padding: 0 0 30px;
+  display: flex;
+  flex-direction: column;
   border: 1px solid rgba(49, 40, 29, 0.08);
+  overflow: hidden;
+}
+.modal-header {
+  flex-shrink: 0;
+}
+.modal-body {
+  flex: 1;
   overflow-y: auto;
+  display: grid;
+  gap: 16px;
+  padding: 0 32px;
+  margin: 0;
+  scrollbar-width: none;
+}
+.modal-body::-webkit-scrollbar {
+  display: none;
+}
+.modal-footer {
+  flex-shrink: 0;
+  padding: 16px 32px 0;
 }
 .modal-card h2 {
   font-size: 42px;
@@ -530,11 +549,7 @@ footer .logo small {
   font-size: 28px;
   color: #574e45;
   cursor: pointer;
-}
-.modal-card form {
-  display: grid;
-  gap: 16px;
-  padding: 0 32px;
+  z-index: 1;
 }
 .booking-field-group {
   display: grid;
@@ -568,17 +583,16 @@ footer .logo small {
   box-shadow: 0 0 0 3px rgba(184, 138, 59, 0.13);
 }
 .booking-note {
-  margin: 0;
+  margin: 0 0 12px;
   color: #72675f;
   font-size: 12px;
   line-height: 1.6;
 }
 .booking-submit {
   width: 100%;
-  margin-top: 4px;
 }
 .form-error {
-  margin: 0;
+  margin: 0 0 8px;
   color: #8c2f2f;
   font-size: 13px;
   line-height: 1.5;
@@ -586,7 +600,8 @@ footer .logo small {
 .success {
   color: var(--clay);
   line-height: 1.7;
-  padding: 0 32px;
+  padding: 20px 32px;
+  margin: 0;
 }
 @media (max-width: 760px) {
   .header {
@@ -691,7 +706,12 @@ footer .logo small {
     margin: 0;
   }
   .modal-card {
-    padding: 38px 25px;
     max-height: calc(100vh - 40px);
+  }
+  .modal-body {
+    padding: 0 24px;
+  }
+  .modal-footer {
+    padding: 16px 24px 0;
   }
 }
