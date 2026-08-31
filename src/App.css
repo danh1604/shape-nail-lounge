@@ -10,6 +10,8 @@
   width: 100%;
 }
 .site-shell {
+}
+main {
   overflow-x: hidden;
 }
 .header {
