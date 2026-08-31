@@ -475,6 +475,8 @@ footer .logo small {
 .footer-map {
   justify-self: center;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  width: clamp(280px, 42vw, 420px);
+  height: 220px;
 }
 .footer-copyright {
   display: block;
@@ -727,6 +729,22 @@ footer .logo small {
   footer {
     flex-wrap: wrap;
     gap: 20px;
+  }
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .footer-contact {
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
+  }
+  .footer-map {
+    width: 100%;
+    max-width: 400px;
+    height: 220px;
   }
   footer p {
     order: 3;

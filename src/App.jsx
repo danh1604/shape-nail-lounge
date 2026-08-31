@@ -497,8 +497,6 @@ function App() {
           <div
             className="footer-map"
             style={{
-              width: "clamp(280px, 42vw, 420px)",
-              height: "220px",
               overflow: "hidden",
               border: "1px solid #62513b",
               borderRadius: "4px",
