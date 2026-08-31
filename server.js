@@ -1,12 +1,15 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { MongoClient } from "mongodb";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5174;
-const reminderJobs = new Set();
+
+const mongoClient = new MongoClient(process.env.MONGODB_URI);
+let appointments;
 
 app.use(cors());
 app.use(express.json());
@@ -26,7 +29,7 @@ const getBrevoErrorMessage = async (response, senderEmail) => {
     senderEmail?.toLowerCase().includes("hotmail.com") ||
     senderEmail?.toLowerCase().includes("icloud.com")
   ) {
-    return `${rawMessage}. Please verify the sender email in Brevo > Settings > Senders & Domains and restart the server after updating SALON_EMAIL in .env. Use a business email from your own domain, not Gmail/Outlook/Yahoo. Current sender: ${senderEmail || "not set"}.`;
+    return `${rawMessage}. Please verify the sender email in Brevo > Settings > Senders & Domains and restart the server after updating SENDER_EMAIL in .env. Use a business email from your own domain, not Gmail/Outlook/Yahoo. Current sender: ${senderEmail || "not set"}.`;
   }
 
   return rawMessage;
@@ -76,127 +79,50 @@ const sendEmail = async ({
   }
 };
 
-const scheduleReminder = async ({
-  customer_name,
-  customer_email,
-  appointment_date,
-  appointment_time,
-  service_name,
-  apiKey,
-  senderEmail,
-  salonContactEmail,
-}) => {
-  const appointmentDateTime = new Date(`${appointment_date}T${appointment_time}:00`);
-  const reminderAt = new Date(appointmentDateTime.getTime() - 2 * 60 * 60 * 1000);
-  const delay = reminderAt.getTime() - Date.now();
-  const safeDelay = Math.max(delay, 5 * 1000);
-  const jobKey = `${customer_email}-${appointment_date}-${appointment_time}`;
-  const reminderTemplateId = Number(
-    process.env.BREVO_REMINDER_TEMPLATE_ID || process.env.BREVO_TEMPLATE_ID || 0
-  );
-  const shopPhone = process.env.SHOP_PHONE || "123 Beauty Street";
-  const shopLogoUrl =
-    process.env.SHOP_LOGO_URL ||
-    "https://img.mailinblue.com/11962144/images/content_library/original/6a93ae97ef18b433911b0deb.jpg";
-
-  if (Number.isNaN(appointmentDateTime.getTime()) || reminderJobs.has(jobKey)) {
-    return;
-  }
-
-  reminderJobs.add(jobKey);
-
-  setTimeout(async () => {
-    try {
-      const reminderParams = {
-        customer_name,
-        appointment_datetime: `${appointment_date} at ${appointment_time}`,
-        service_name: service_name || "Your appointment",
-        store_phone: shopPhone,
-        shop_logo_url: shopLogoUrl,
-      };
-
-      const reminderHtml = `
-        <div style="margin:0;padding:0;background:#f5efe8;font-family:Arial,Helvetica,sans-serif;">
-          <div style="max-width:640px;margin:0 auto;background:#fffdf9;border:1px solid #eadcc2;border-radius:20px;overflow:hidden;box-shadow:0 18px 42px rgba(49,40,29,0.08);">
-            <div style="background:linear-gradient(135deg,#2d221d 0%,#3a2d26 100%);padding:26px 30px 22px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td valign="middle">
-                    <img src="${shopLogoUrl}" alt="Shape Nail Lounge logo" width="52" height="52" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:16px;background:#fff;padding:4px;" />
-                  </td>
-                  <td valign="middle" style="padding-left:16px;">
-                    <div style="font-size:11px;letter-spacing:3px;color:#e7d7b1;font-weight:700;text-transform:uppercase;">Shape</div>
-                    <div style="font-size:28px;letter-spacing:1.5px;color:#fffaf5;font-weight:700;line-height:1.1;">Nail Lounge</div>
-                  </td>
-                  <td valign="middle" align="right">
-                    <span style="display:inline-block;background:#d7b36a;color:#2d221d;padding:9px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Reminder</span>
-                  </td>
-                </tr>
-              </table>
-            </div>
-
-            <div style="padding:30px 28px 8px;">
-              <p style="margin:0 0 12px;font-size:11px;letter-spacing:2px;color:#8a7045;text-transform:uppercase;font-weight:700;">Friendly reminder</p>
-              <h1 style="margin:0 0 12px;color:#2d221d;font-size:32px;line-height:1.2;font-weight:700;">Hi ${customer_name},</h1>
-              <p style="margin:0 0 22px;color:#564f49;font-size:16px;line-height:1.8;">
-                This is a gentle reminder that your appointment at Shape Nail Lounge is coming up soon.
-              </p>
-
-              <div style="background:#f5efe5;border:1px solid #eadfc8;border-radius:14px;padding:20px 22px;margin:0 0 22px;">
-                <p style="margin:0 0 12px;color:#8b7349;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;">Your appointment</p>
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td style="padding:8px 0;font-size:14px;color:#594f48;width:120px;font-weight:700;">Date</td>
-                    <td style="padding:8px 0;font-size:15px;color:#2d221d;">${appointment_date} at ${appointment_time}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;font-size:14px;color:#594f48;width:120px;font-weight:700;">Service</td>
-                    <td style="padding:8px 0;font-size:15px;color:#2d221d;">${service_name || "Your appointment"}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:8px 0;font-size:14px;color:#594f48;width:120px;font-weight:700;">Location</td>
-                    <td style="padding:8px 0;font-size:15px;color:#2d221d;">Shape Nail Lounge</td>
-                  </tr>
-                </table>
-              </div>
-
-              <p style="margin:0 0 10px;color:#544d48;font-size:15px;line-height:1.8;">
-                Please arrive 10 minutes early so we can prepare everything for your visit and make sure your time with us is relaxed and seamless.
-              </p>
-              <p style="margin:0 0 26px;color:#544d48;font-size:15px;line-height:1.8;">
-                We look forward to welcoming you soon.
-              </p>
-
-              <div style="border-top:1px solid #e7dcc2;padding-top:20px;margin-top:10px;">
-                <p style="margin:0;color:#544d48;font-size:15px;line-height:1.8;">Warmly,</p>
-                <p style="margin:18px 0 0;color:#2d221d;font-size:16px;font-weight:700;line-height:1.6;">Shape Nail Lounge</p>
-              </div>
-            </div>
-
-            <div style="background:#f9f3ea;padding:18px 28px 26px;text-align:center;border-top:1px solid #eadcc2;">
-              <div style="font-size:12px;letter-spacing:1.8px;color:#8a7045;text-transform:uppercase;font-weight:700;">Luxury nail care</div>
-            </div>
-          </div>
+const buildReminderHtml = ({ customer_name, appointment_date, appointment_time, service_name, shopLogoUrl }) => `
+  <div style="margin:0;padding:0;background:#f5efe8;font-family:Arial,Helvetica,sans-serif;">
+    <div style="max-width:640px;margin:0 auto;background:#fffdf9;border:1px solid #eadcc2;border-radius:20px;overflow:hidden;box-shadow:0 18px 42px rgba(49,40,29,0.08);">
+      <div style="background:linear-gradient(135deg,#2d221d 0%,#3a2d26 100%);padding:26px 30px 22px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td valign="middle">
+              <img src="${shopLogoUrl}" alt="Shape Nail Lounge logo" width="52" height="52" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:16px;background:#fff;padding:4px;" />
+            </td>
+            <td valign="middle" style="padding-left:16px;">
+              <div style="font-size:11px;letter-spacing:3px;color:#e7d7b1;font-weight:700;text-transform:uppercase;">Shape</div>
+              <div style="font-size:28px;letter-spacing:1.5px;color:#fffaf5;font-weight:700;line-height:1.1;">Nail Lounge</div>
+            </td>
+            <td valign="middle" align="right">
+              <span style="display:inline-block;background:#d7b36a;color:#2d221d;padding:9px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Reminder</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="padding:30px 28px 8px;">
+        <p style="margin:0 0 12px;font-size:11px;letter-spacing:2px;color:#8a7045;text-transform:uppercase;font-weight:700;">Friendly reminder</p>
+        <h1 style="margin:0 0 12px;color:#2d221d;font-size:32px;line-height:1.2;font-weight:700;">Hi ${customer_name},</h1>
+        <p style="margin:0 0 22px;color:#564f49;font-size:16px;line-height:1.8;">This is a gentle reminder that your appointment at Shape Nail Lounge is coming up soon.</p>
+        <div style="background:#f5efe5;border:1px solid #eadfc8;border-radius:14px;padding:20px 22px;margin:0 0 22px;">
+          <p style="margin:0 0 12px;color:#8b7349;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;">Your appointment</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="padding:8px 0;font-size:14px;color:#594f48;width:120px;font-weight:700;">Date</td><td style="padding:8px 0;font-size:15px;color:#2d221d;">${appointment_date} at ${appointment_time}</td></tr>
+            <tr><td style="padding:8px 0;font-size:14px;color:#594f48;width:120px;font-weight:700;">Service</td><td style="padding:8px 0;font-size:15px;color:#2d221d;">${service_name || "Your appointment"}</td></tr>
+            <tr><td style="padding:8px 0;font-size:14px;color:#594f48;width:120px;font-weight:700;">Location</td><td style="padding:8px 0;font-size:15px;color:#2d221d;">Shape Nail Lounge</td></tr>
+          </table>
         </div>
-      `;
-
-      await sendEmail({
-        apiKey,
-        senderEmail,
-        to: [{ email: customer_email, name: customer_name }],
-        replyTo: { email: salonContactEmail, name: "Shape Nail Lounge" },
-        subject: "Appointment Reminder - Shape Nail Lounge",
-        htmlContent: reminderTemplateId ? undefined : reminderHtml,
-        templateId: reminderTemplateId || undefined,
-        params: reminderTemplateId ? reminderParams : undefined,
-      });
-    } catch (error) {
-      console.error("REMINDER EMAIL ERROR:", error);
-    } finally {
-      reminderJobs.delete(jobKey);
-    }
-  }, safeDelay);
-};
+        <p style="margin:0 0 10px;color:#544d48;font-size:15px;line-height:1.8;">Please arrive 10 minutes early so we can prepare everything for your visit and make sure your time with us is relaxed and seamless.</p>
+        <p style="margin:0 0 26px;color:#544d48;font-size:15px;line-height:1.8;">We look forward to welcoming you soon.</p>
+        <div style="border-top:1px solid #e7dcc2;padding-top:20px;margin-top:10px;">
+          <p style="margin:0;color:#544d48;font-size:15px;line-height:1.8;">Warmly,</p>
+          <p style="margin:18px 0 0;color:#2d221d;font-size:16px;font-weight:700;line-height:1.6;">Shape Nail Lounge</p>
+        </div>
+      </div>
+      <div style="background:#f9f3ea;padding:18px 28px 26px;text-align:center;border-top:1px solid #eadcc2;">
+        <div style="font-size:12px;letter-spacing:1.8px;color:#8a7045;text-transform:uppercase;font-weight:700;">Luxury nail care</div>
+      </div>
+    </div>
+  </div>
+`;
 
 app.post("/api/booking", async (req, res) => {
   try {
@@ -374,15 +300,17 @@ app.post("/api/booking", async (req, res) => {
       params: salonTemplateId ? salonParams : undefined,
     });
 
-    await scheduleReminder({
+    await appointments.insertOne({
       customer_name,
       customer_email,
+      customer_phone,
+      customer_note: customer_note || "",
       appointment_date: finalAppointmentDate,
       appointment_time: finalAppointmentTime,
       service_name,
-      apiKey,
-      senderEmail,
-      salonContactEmail,
+      service_price: service_price || "Price varies",
+      reminder_sent: false,
+      created_at: new Date(),
     });
 
     return res.status(200).json({
@@ -396,6 +324,104 @@ app.post("/api/booking", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.get("/api/cron/send-reminders", async (req, res) => {
+  try {
+    if (req.query.token !== process.env.CRON_SECRET_TOKEN) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const apiKey = process.env.BREVO_API_KEY;
+    const senderEmail = process.env.SENDER_EMAIL;
+    const salonContactEmail = process.env.SALON_EMAIL;
+    const reminderTemplateId = Number(
+      process.env.BREVO_REMINDER_TEMPLATE_ID || process.env.BREVO_TEMPLATE_ID || 0
+    );
+    const shopPhone = process.env.SHOP_PHONE || "123 Beauty Street";
+    const shopLogoUrl =
+      process.env.SHOP_LOGO_URL ||
+      "https://img.mailinblue.com/11962144/images/content_library/original/6a93ae97ef18b433911b0deb.jpg";
+
+    if (!apiKey || !senderEmail || !salonContactEmail) {
+      return res.status(500).json({ message: "Brevo configuration is missing." });
+    }
+
+    const now = new Date();
+    const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+
+    const pendingReminders = await appointments
+      .find({
+        reminder_sent: false,
+        $expr: {
+          $lte: [
+            {
+              $dateAdd: {
+                startDate: {
+                  $dateFromString: { dateString: { $concat: ["$appointment_date", "T", "$appointment_time", ":00"] } },
+                },
+                unit: "hour",
+                amount: -2,
+              },
+            },
+            twoHoursLater,
+          ],
+        },
+      })
+      .toArray();
+
+    let sent = 0;
+    for (const appt of pendingReminders) {
+      try {
+        const reminderParams = {
+          customer_name: appt.customer_name,
+          appointment_datetime: `${appt.appointment_date} at ${appt.appointment_time}`,
+          service_name: appt.service_name || "Your appointment",
+          store_phone: shopPhone,
+          shop_logo_url: shopLogoUrl,
+        };
+
+        await sendEmail({
+          apiKey,
+          senderEmail,
+          to: [{ email: appt.customer_email, name: appt.customer_name }],
+          replyTo: { email: salonContactEmail, name: "Shape Nail Lounge" },
+          subject: "Appointment Reminder - Shape Nail Lounge",
+          htmlContent: reminderTemplateId
+            ? undefined
+            : buildReminderHtml({
+                customer_name: appt.customer_name,
+                appointment_date: appt.appointment_date,
+                appointment_time: appt.appointment_time,
+                service_name: appt.service_name,
+                shopLogoUrl,
+              }),
+          templateId: reminderTemplateId || undefined,
+          params: reminderTemplateId ? reminderParams : undefined,
+        });
+
+        await appointments.updateOne(
+          { _id: appt._id },
+          { $set: { reminder_sent: true } }
+        );
+        sent++;
+      } catch (emailError) {
+        console.error("REMINDER EMAIL ERROR:", emailError);
+      }
+    }
+
+    return res.status(200).json({ sent });
+  } catch (error) {
+    console.error("CRON JOB ERROR:", error);
+    return res.status(500).json({ message: error.message || "Cron job failed." });
+  }
+});
+
+app.listen(PORT, async () => {
+  try {
+    await mongoClient.connect();
+    appointments = mongoClient.db("nail-studio").collection("appointments");
+    console.log("Connected to MongoDB Atlas");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+  }
   console.log(`Server running on http://localhost:${PORT}`);
 });
