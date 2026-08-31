@@ -53,6 +53,7 @@ export default async function handler(req, res) {
     });
 
     let sent = 0;
+    let failed = 0;
     for (const appt of pendingReminders) {
       try {
         const reminderParams = {
@@ -63,35 +64,36 @@ export default async function handler(req, res) {
           shop_logo_url: shopLogoUrl,
         };
 
+        console.log("REMINDER: Sending to", appt.customer_email, "for", appt.appointment_date, appt.appointment_time);
+
         await sendEmail({
           apiKey,
           senderEmail,
           to: [{ email: appt.customer_email, name: appt.customer_name }],
           replyTo: { email: salonContactEmail, name: "Shape Nail Lounge" },
           subject: "Appointment Reminder - Shape Nail Lounge",
-          htmlContent: reminderTemplateId
-            ? undefined
-            : buildReminderHtml({
-                customer_name: appt.customer_name,
-                appointment_date: appt.appointment_date,
-                appointment_time: appt.appointment_time,
-                service_name: appt.service_name,
-                shopLogoUrl,
-              }),
-          templateId: reminderTemplateId || undefined,
-          params: reminderTemplateId ? reminderParams : undefined,
+          htmlContent: buildReminderHtml({
+            customer_name: appt.customer_name,
+            appointment_date: appt.appointment_date,
+            appointment_time: appt.appointment_time,
+            service_name: appt.service_name,
+            shopLogoUrl,
+          }),
         });
 
         await db
           .collection("appointments")
           .updateOne({ _id: appt._id }, { $set: { reminder_sent: true } });
         sent++;
+        console.log("REMINDER: Sent OK to", appt.customer_email);
       } catch (emailError) {
-        console.error("REMINDER EMAIL ERROR:", emailError);
+        failed++;
+        console.error("REMINDER EMAIL ERROR:", emailError.message || emailError);
       }
     }
 
-    return res.status(200).json({ sent });
+    console.log(`REMINDER SUMMARY: sent=${sent}, failed=${failed}, total=${pendingReminders.length}`);
+    return res.status(200).json({ sent, failed, total: pendingReminders.length });
   } catch (error) {
     console.error("CRON JOB ERROR:", error);
     return res.status(500).json({ message: error.message || "Cron job failed." });
