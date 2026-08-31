@@ -633,6 +633,7 @@ function App() {
                           appointment_time: appointmentTime,
                           service_name: serviceName,
                           service_price: servicePrice,
+                          timezone_offset: new Date().getTimezoneOffset(),
                         }),
                       });
 

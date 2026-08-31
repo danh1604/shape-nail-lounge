@@ -40,7 +40,14 @@ export default async function handler(req, res) {
       .toArray();
 
     const pendingReminders = allPending.filter((appt) => {
-      const apptDateTime = new Date(`${appt.appointment_date}T${appt.appointment_time}:00`);
+      let apptDateTime;
+      if (appt.appointment_datetime_utc) {
+        apptDateTime = new Date(appt.appointment_datetime_utc);
+      } else {
+        const offset = Number(appt.timezone_offset) || 420;
+        const local = new Date(`${appt.appointment_date}T${appt.appointment_time}:00`);
+        apptDateTime = new Date(local.getTime() + offset * 60 * 1000);
+      }
       const reminderAt = new Date(apptDateTime.getTime() - 2 * 60 * 60 * 1000);
       return reminderAt <= now;
     });

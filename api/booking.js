@@ -29,6 +29,7 @@ export default async function handler(req, res) {
       appointment_datetime,
       service_name,
       service_price,
+      timezone_offset,
     } = req.body || {};
 
     const resolvedDateTime = appointment_datetime || "";
@@ -47,6 +48,10 @@ export default async function handler(req, res) {
         message: "Missing required booking information.",
       });
     }
+
+    const localDateTime = new Date(`${parsedDate}T${parsedTime}:00`);
+    const offsetMinutes = Number(timezone_offset) || 0;
+    const utcDateTime = new Date(localDateTime.getTime() + offsetMinutes * 60 * 1000);
 
     const finalAppointmentDate = parsedDate;
     const finalAppointmentTime = parsedTime;
@@ -192,6 +197,8 @@ export default async function handler(req, res) {
         customer_note: customer_note || "",
         appointment_date: finalAppointmentDate,
         appointment_time: finalAppointmentTime,
+        appointment_datetime_utc: utcDateTime,
+        timezone_offset: offsetMinutes,
         service_name,
         service_price: service_price || "Price varies",
         reminder_sent: false,
