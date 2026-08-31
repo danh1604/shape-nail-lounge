@@ -744,28 +744,6 @@ function App() {
                 </div>
               </>
             )}
-          </div>
-        </div>
-      )}
-
-  <p className="booking-note">
-    We’ll send a reminder 2 hours before your appointment.
-  </p>
-
-  <button
-    type="submit"
-    className="dark-button booking-submit"
-    disabled={sending}
-  >
-    {sending
-      ? "Sending..."
-      : "Submit request ↗"}
-  </button>
-</form>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
