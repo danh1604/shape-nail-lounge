@@ -2,6 +2,14 @@ import { connectToDatabase } from "../../lib/mongodb.js";
 import { sendEmail, buildReminderHtml } from "../../lib/brevo.js";
 
 export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     if (req.query.token !== process.env.CRON_SECRET_TOKEN) {
       return res.status(403).json({ message: "Forbidden" });
