@@ -322,12 +322,6 @@ function App() {
               A quiet pause in the city, where your hands are cared for and you
               can return to yourself.
             </p>
-            <button
-              className="dark-button"
-              onClick={() => setBookingOpen(true)}
-            >
-              Book now ↗
-            </button>
           </div>
           <div className="hero-photo">
             <span className="est">
@@ -442,22 +436,32 @@ function App() {
             </h2>
            
           </div>
-          <button className="light-button" onClick={() => setBookingOpen(true)}>
-            Book your appointment ↗
-          </button>
         </section>
       </main>
-      <a
-        className="hotline-button"
-        href="tel:+17042802159"
-        aria-label="Call Shape Nail Lounge at (704) 280-2159"
-      >
-        <span className="hotline-icon" aria-hidden="true">☎</span>
-        <span>
-          <small>HOTLINE</small>
-          <strong>(704) 280-2159</strong>
-        </span>
-      </a>
+      <div className="floating-buttons">
+        <button
+          className="fab-book"
+          onClick={() => setBookingOpen(true)}
+          aria-label="Book an appointment"
+        >
+          <span className="fab-book-icon" aria-hidden="true">✏</span>
+          <span>
+            <small>BOOKING</small>
+            <strong>Book now</strong>
+          </span>
+        </button>
+        <a
+          className="fab-phone"
+          href="tel:+17042802159"
+          aria-label="Call Shape Nail Lounge at (704) 280-2159"
+        >
+          <span className="hotline-icon" aria-hidden="true">☎</span>
+          <span>
+            <small>HOTLINE</small>
+            <strong>(704) 280-2159</strong>
+          </span>
+        </a>
+      </div>
       <footer>
         <div className="footer-inner">
           <a className="logo" href="#top">
