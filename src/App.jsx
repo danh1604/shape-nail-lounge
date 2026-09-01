@@ -8,6 +8,7 @@ function App() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [bookingError, setBookingError] = useState("");
+  const [selectedServices, setSelectedServices] = useState([]);
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
   const bookingEndpoint = `${apiBaseUrl}/api/booking`;
   const services = [
@@ -437,17 +438,8 @@ function App() {
                         ? appointmentDateTime.split("T")
                         : ["", ""];
 
-                      const serviceSelection =
-                        form.get("service_name")?.toString().trim() || "";
-                      const serviceSeparator = serviceSelection.lastIndexOf(" - ");
-                      const serviceName =
-                        serviceSeparator > -1
-                          ? serviceSelection.slice(0, serviceSeparator)
-                          : serviceSelection;
-                      const servicePrice =
-                        serviceSeparator > -1
-                          ? serviceSelection.slice(serviceSeparator + 3)
-                          : "Price varies";
+                      const serviceName = selectedServices.join(", ");
+                      const servicePrice = "Price varies";
 
                       if (!customerName) {
                         throw new Error("Please enter the customer's name.");
@@ -469,8 +461,8 @@ function App() {
                         throw new Error("Please select an appointment time.");
                       }
 
-                      if (!serviceSelection) {
-                        throw new Error("Please select a service.");
+                      if (selectedServices.length === 0) {
+                        throw new Error("Please select at least one service.");
                       }
 
                       const response = await fetch(bookingEndpoint, {
@@ -553,20 +545,33 @@ function App() {
                   </div>
 
                   <div className="booking-field-group">
-                    <label htmlFor="service_name">Service</label>
-                    <select
-                      id="service_name"
-                      name="service_name"
-                      defaultValue=""
-                      required
-                    >
-                      <option value="">Select a service</option>
+                    <label>Services</label>
+                    <div className="service-checkbox-list">
                       {bookingServices.map(([number, name]) => (
-                          <option key={`${name}-${number}`} value={name}>
-                            {name}
-                          </option>
-                        ))}
-                    </select>
+                        <label key={`${name}-${number}`} className="service-checkbox-item">
+                          <input
+                            type="checkbox"
+                            name="service_name"
+                            value={name}
+                            checked={selectedServices.includes(name)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedServices([...selectedServices, name]);
+                              } else {
+                                setSelectedServices(selectedServices.filter((s) => s !== name));
+                              }
+                            }}
+                          />
+                          <span className="service-checkbox-mark"></span>
+                          <span className="service-checkbox-text">{name}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {selectedServices.length > 0 && (
+                      <p className="service-selected-count">
+                        {selectedServices.length} service{selectedServices.length > 1 ? "s" : ""} selected
+                      </p>
+                    )}
                   </div>
 
                   <div className="booking-field-group">
