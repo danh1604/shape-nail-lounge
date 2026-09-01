@@ -11,207 +11,63 @@ function App() {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
   const bookingEndpoint = `${apiBaseUrl}/api/booking`;
   const services = [
-    [
-      "01",
-      "SNS Full Set",
-      "",
-      "$45+",
-      "Nail Care",
-    ],
-    [
-      "02",
-      "SNS Full Set with Removal",
-      "",
-      "$50+",
-      "Nail Care",
-    ],
-    [
-      "03",
-      "SNS Ombré",
-      "",
-      "$65+",
-      "Nail Art",
-    ],
-    [
-      "04",
-      "Add Tips",
-      "",
-      "+$10",
-      "Nail Care",
-    ],
-    ["05", "French", "", "+$10", "Nail Art"],
-    [
-      "06",
-      "Manicure",
-      "",
-      "$25",
-      "Nail Care",
-    ],
-    [
-      "07",
-      "Gel Manicure",
-      "",
-      "$40",
-      "Nail Care",
-    ],
-    [
-      "08",
-      "Polish Change - Hands or Toes",
-      "",
-      "$20",
-      "Nail Care",
-    ],
-    [
-      "09",
-      "Gel Polish Change - Hands or Toes",
-      "",
-      "$30",
-      "Nail Care",
-    ],
-    [
-      "10",
-      "Gel Take Off with Service",
-      "",
-      "$5",
-      "Nail Care",
-    ],
-    [
-      "11",
-      "Gel Take Off without Service",
-      "",
-      "$10",
-      "Nail Care",
-    ],
-    [
-      "12",
-      "Full Set with Gel",
-      "",
-      "$55+",
-      "Nail Care",
-    ],
-    [
-      "13",
-      "Acrylic Fill with Gel",
-      "",
-      "$45+",
-      "Nail Care",
-    ],
-    [
-      "14",
-      "Acrylic Ombré",
-      "",
-      "$70+",
-      "Nail Art",
-    ],
-    [
-      "15",
-      "Gel-X Full Set",
-      "",
-      "$65+",
-      "Nail Care",
-    ],
-    [
-      "16",
-      "Gel-X Fill In",
-      "",
-      "$55+",
-      "Nail Care",
-    ],
-    [
-      "17",
-      "Builder Gel Full Set",
-      "",
-      "$60+",
-      "Nail Care",
-    ],
-    [
-      "18",
-      "Builder Gel Fill In",
-      "",
-      "$50+",
-      "Nail Care",
-    ],
-    [
-      "19",
-      "Classic Spa Pedicure",
-      "Mint soak, sugar scrub, lotion massage and hot towel wrap.",
-      "$40",
-      "Pedicure",
-    ],
-    [
-      "20",
-      "Deluxe Spa Pedicure",
-      "Mint soak, sugar scrub, mineral mask, hot towel and hot stone massage.",
-      "$50",
-      "Pedicure",
-    ],
-    [
-      "21",
-      "Lemongrass & Green Tea Pedicure",
-      "Scented soak, scrub, moisture mask, candle massage and hot stone.",
-      "$60",
-      "Pedicure",
-    ],
-    [
-      "22",
-      "Collagen Pedicure",
-      "Collagen soak, scrub cleanse, mask, massage, hot stone and collagen socks.",
-      "$70",
-      "Pedicure",
-    ],
-    [
-      "23",
-      "French Design",
-      "",
-      "$10 - $20",
-      "Nail Art",
-    ],
-    ["24", "Chrome", "", "$20", "Nail Art"],
-    ["25", "Cat Eye", "", "$20", "Nail Art"],
-    [
-      "26",
-      "Custom Nail Art",
-      "",
-      "Price Varies",
-      "Nail Art",
-    ],
-    [
-      "27",
-      "Kids Polish Change - Hands",
-      "",
-      "$10",
-      "Other",
-    ],
-    [
-      "28",
-      "Kids Gel Polish Change - Hands",
-      "",
-      "$20",
-      "Other",
-    ],
-    [
-      "29",
-      "Kids Classic Pedicure",
-      "",
-      "$30",
-      "Other",
-    ],
-    ["30", "Eyebrows", "", "$12", "Waxing"],
-    ["31", "Upper Lip", "", "$8", "Waxing"],
-    ["32", "Chin", "", "$10+", "Waxing"],
-    [
-      "33",
-      "Face Combo",
-      "",
-      "$40+",
-      "Waxing",
-    ],
-    ["34", "Underarms", "", "$25", "Waxing"],
-    ["35", "Arms", "", "$30 / $40", "Waxing"],
-    ["36", "Legs", "", "$40 / $60", "Waxing"],
-    ["37", "Chest", "", "$30+", "Waxing"],
-    ["38", "Back", "", "$50+", "Waxing"],
+    ["01", "SNS", "", "", "SNS"],
+    ["02", "Acrylic Full Set with Gel", "", "$55+", "SNS"],
+    ["03", "Acrylic Fill with Gel", "", "$45+", "SNS"],
+    ["04", "Gel-X Full Set", "", "$65+", "SNS"],
+    ["05", "Gel-X Fill In", "", "$55+", "SNS"],
+    ["06", "Builder Gel Full Set", "", "$60+", "SNS"],
+    ["07", "Builder Gel Fill In", "", "$50+", "SNS"],
+    ["08", "Manicure", "", "$25", "Manicure"],
+    ["09", "Gel Manicure", "", "$40", "Manicure"],
+    ["10", "Polish Change - Hands or Toes", "", "$20", "Manicure"],
+    ["11", "Gel Polish Change - Hands or Toes", "", "$30", "Manicure"],
+    ["12", "Classic Spa Pedicure", "Mint soak, sugar scrub, lotion massage and hot towel wrap.", "$40", "Pedicure"],
+    ["13", "Deluxe Spa Pedicure", "Mint soak, sugar scrub, mineral mask, hot towel and hot stone massage.", "$50", "Pedicure"],
+    ["14", "Lemongrass & Green Tea Pedicure", "Scented soak, scrub, moisture mask, candle massage and hot stone.", "$60", "Pedicure"],
+    ["15", "Collagen Pedicure", "Collagen soak, scrub cleanse, mask, massage, hot stone and collagen socks.", "$70", "Pedicure"],
+    ["16", "Kids Polish Change - Hands", "", "$10", "Kids"],
+    ["17", "Kids Gel Polish Change - Hands", "", "$20", "Kids"],
+    ["18", "Kids Classic Pedicure", "", "$30", "Kids"],
+    ["19", "Eyebrows", "", "$12", "Waxing"],
+    ["20", "Upper Lips", "", "$8", "Waxing"],
+    ["21", "Chin", "", "$10+", "Waxing"],
+    ["22", "Face Combo", "", "$40+", "Waxing"],
+    ["23", "Underarms", "", "$25", "Waxing"],
+    ["24", "Arms", "", "$30 / $40", "Waxing"],
+    ["25", "Legs", "", "$40 / $60", "Waxing"],
+    ["26", "Chest", "", "$30+", "Waxing"],
+    ["27", "Back", "", "$50+", "Waxing"],
   ];
+  const bookingServices = [
+    ["01", "SNS Acrylic Full Set with Gel"],
+    ["02", "SNS Acrylic Fill with Gel"],
+    ["03", "Gel-X Full Set"],
+    ["04", "Gel-X Fill In"],
+    ["05", "Builder Gel Full Set"],
+    ["06", "Builder Gel Fill In"],
+    ["07", "Manicure"],
+    ["08", "Gel Manicure"],
+    ["09", "Polish Change - Hands or Toes"],
+    ["10", "Gel Polish Change - Hands or Toes"],
+    ["11", "Classic Spa Pedicure"],
+    ["12", "Deluxe Spa Pedicure"],
+    ["13", "Lemongrass & Green Tea Pedicure"],
+    ["14", "Collagen Pedicure"],
+    ["15", "Kids Polish Change - Hands"],
+    ["16", "Kids Gel Polish Change - Hands"],
+    ["17", "Kids Classic Pedicure"],
+    ["18", "Eyebrows"],
+    ["19", "Upper Lip"],
+    ["20", "Chin"],
+    ["21", "Face Combo"],
+    ["22", "Underarms"],
+    ["23", "Arms"],
+    ["24", "Legs"],
+    ["25", "Chest"],
+    ["26", "Back"],
+  ];
+
   const visibleServices =
     filter === "All"
       ? services
@@ -359,11 +215,11 @@ function App() {
             <div className="filters">
               {[
                 "All",
-                "Nail Care",
+                "SNS",
+                "Manicure",
                 "Pedicure",
-                "Nail Art",
+                "Kids",
                 "Waxing",
-                "Other",
               ].map((item) => (
                 <button
                   className={filter === item ? "selected" : ""}
@@ -705,11 +561,11 @@ function App() {
                       required
                     >
                       <option value="">Select a service</option>
-                      {services.map(([number, name, description, price]) => (
-                        <option key={`${name}-${number}`} value={`${name} - ${price}`}>
-                          {name} - {price}
-                        </option>
-                      ))}
+                      {bookingServices.map(([number, name]) => (
+                          <option key={`${name}-${number}`} value={name}>
+                            {name}
+                          </option>
+                        ))}
                     </select>
                   </div>
 
