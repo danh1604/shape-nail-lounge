@@ -41,7 +41,7 @@ function App() {
     ["27", "Back", "", "$50+", "Waxing"],
   ];
   const bookingServices = [
-    ["01", "SNS"],
+    ["01", "SNS $45+"],
     ["02", " Acrylic Full Set with Gel"],
     ["03", " Acrylic Fill with Gel"],
     ["04", "Gel-X Full Set"],

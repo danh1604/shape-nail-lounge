@@ -77,36 +77,6 @@ export default async function handler(req, res) {
     }
 
     const appointmentDateTime = `${finalAppointmentDate} at ${finalAppointmentTime}`;
-    const customerTemplateId = Number(
-      process.env.BREVO_CUSTOMER_TEMPLATE_ID || process.env.BREVO_TEMPLATE_ID || 0
-    );
-    const salonTemplateId = Number(
-      process.env.BREVO_SALON_TEMPLATE_ID || process.env.BREVO_TEMPLATE_ID || 0
-    );
-
-    const customerParams = {
-      customer_name,
-      customer_email,
-      customer_phone,
-      appointment_datetime: appointmentDateTime,
-      service_name,
-      service_price: service_price || "Price varies",
-      salon_name: "Shape Nail Lounge",
-      shop_logo_url: shopLogoUrl,
-      customer_note: customer_note || "No additional notes",
-    };
-
-    const salonParams = {
-      customer_name,
-      customer_email,
-      customer_phone,
-      appointment_datetime: appointmentDateTime,
-      service_name,
-      service_price: service_price || "Price varies",
-      salon_name: "Shape Nail Lounge",
-      shop_logo_url: shopLogoUrl,
-      customer_note: customer_note || "No additional notes",
-    };
 
     const { db } = await connectToDatabase();
 
@@ -117,9 +87,7 @@ export default async function handler(req, res) {
         to: [{ email: customer_email, name: customer_name }],
         replyTo: { email: salonContactEmail, name: "Shape Nail Lounge" },
         subject: "Appointment Confirmation - Shape Nail Lounge",
-        htmlContent: customerTemplateId
-          ? undefined
-          : `
+        htmlContent: `
         <div style="background:#f7f1e7;padding:32px 0;font-family:Arial,Helvetica,sans-serif;color:#31281d;">
           <div style="max-width:620px;margin:0 auto;background:#fffdf9;border:1px solid #e5d7bd;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(49,40,29,0.08);">
             <div style="background:#31281d;padding:22px 28px;display:flex;align-items:center;gap:16px;">
@@ -150,8 +118,6 @@ export default async function handler(req, res) {
           </div>
         </div>
       `,
-        templateId: customerTemplateId || undefined,
-        params: customerTemplateId ? customerParams : undefined,
       }),
       sendEmail({
         apiKey,
@@ -159,9 +125,7 @@ export default async function handler(req, res) {
         to: [{ email: salonContactEmail, name: "Shape Nail Lounge" }],
         replyTo: { email: customer_email, name: customer_name },
         subject: `New appointment request from ${customer_name}`,
-        htmlContent: salonTemplateId
-          ? undefined
-          : `
+        htmlContent: `
         <div style="background:#f7f1e7;padding:32px 0;font-family:Arial,Helvetica,sans-serif;color:#31281d;">
           <div style="max-width:620px;margin:0 auto;background:#fffdf9;border:1px solid #e5d7bd;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(49,40,29,0.08);">
             <div style="background:#31281d;padding:22px 28px;display:flex;align-items:center;gap:16px;">
@@ -187,8 +151,6 @@ export default async function handler(req, res) {
           </div>
         </div>
       `,
-        templateId: salonTemplateId || undefined,
-        params: salonTemplateId ? salonParams : undefined,
       }),
       db.collection("appointments").insertOne({
         customer_name,
