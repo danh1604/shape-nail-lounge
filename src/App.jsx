@@ -12,7 +12,7 @@ function App() {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
   const bookingEndpoint = `${apiBaseUrl}/api/booking`;
   const services = [
-    ["01", "SNS", "", "", "SNS"],
+    ["01", "SNS", "", "$45+", "SNS"],
     ["02", "Acrylic Full Set with Gel", "", "$55+", "SNS"],
     ["03", "Acrylic Fill with Gel", "", "$45+", "SNS"],
     ["04", "Gel-X Full Set", "", "$65+", "SNS"],
@@ -41,7 +41,7 @@ function App() {
     ["27", "Back", "", "$50+", "Waxing"],
   ];
   const bookingServices = [
-    ["01", "SNS $45+"],
+    ["01", "SNS"],
     ["02", " Acrylic Full Set with Gel"],
     ["03", " Acrylic Fill with Gel"],
     ["04", "Gel-X Full Set"],
