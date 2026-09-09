@@ -1,5 +1,6 @@
 import { connectToDatabase } from "../../lib/mongodb.js";
 import { sendEmail, buildReminderHtml } from "../../lib/brevo.js";
+import { formatTimeAMPM, formatDateUS } from "../../lib/format.js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
       try {
         const reminderParams = {
           customer_name: appt.customer_name,
-          appointment_datetime: `${appt.appointment_date} at ${appt.appointment_time}`,
+          appointment_datetime: `${formatDateUS(appt.appointment_date)} at ${formatTimeAMPM(appt.appointment_time)}`,
           service_name: appt.service_name || "Your appointment",
           store_phone: shopPhone,
           shop_logo_url: shopLogoUrl,

@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 import "./App.css";
 
 function App() {
@@ -9,6 +11,7 @@ function App() {
   const [sending, setSending] = useState(false);
   const [bookingError, setBookingError] = useState("");
   const [selectedServices, setSelectedServices] = useState([]);
+  const datetimeRef = useRef(null);
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
   const bookingEndpoint = `${apiBaseUrl}/api/booking`;
   const services = [
@@ -80,6 +83,21 @@ function App() {
   )
     .toISOString()
     .slice(0, 16);
+
+  useEffect(() => {
+    if (bookingOpen && datetimeRef.current) {
+      const fp = flatpickr(datetimeRef.current, {
+        enableTime: true,
+        dateFormat: "m/d/Y h:i K",
+        time_24hr: false,
+        minDate: "today",
+        defaultHour: 9,
+        defaultMinute: 0,
+        minuteIncrement: 5,
+      });
+      return () => fp.destroy();
+    }
+  }, [bookingOpen]);
 
   return (
     <div className="site-shell" lang="en-US">
@@ -432,12 +450,21 @@ function App() {
                       const customerNote =
                         form.get("customer_note")?.toString().trim() || "";
 
-                      const appointmentDateTime =
+                      const datetimeStr =
                         form.get("appointment_datetime")?.toString().trim() || "";
 
-                      const [appointmentDate, appointmentTime] = appointmentDateTime
-                        ? appointmentDateTime.split("T")
-                        : ["", ""];
+                      let appointmentDate = "";
+                      let appointmentTime = "";
+                      if (datetimeRef.current?._flatpickr?.selectedDates?.[0]) {
+                        const d = datetimeRef.current._flatpickr.selectedDates[0];
+                        const y = d.getFullYear();
+                        const mo = String(d.getMonth() + 1).padStart(2, "0");
+                        const da = String(d.getDate()).padStart(2, "0");
+                        const h = d.getHours();
+                        const mi = String(d.getMinutes()).padStart(2, "0");
+                        appointmentDate = `${y}-${mo}-${da}`;
+                        appointmentTime = `${String(h).padStart(2, "0")}:${mi}`;
+                      }
 
                       const serviceName = selectedServices.join(", ");
                       const servicePrice = "Price varies";
@@ -535,12 +562,12 @@ function App() {
                   <div className="booking-field-group">
                     <label htmlFor="appointment_datetime">Date & time</label>
                     <input
+                      ref={datetimeRef}
                       id="appointment_datetime"
                       name="appointment_datetime"
-                      type="datetime-local"
-                      lang="en-US"
-                      locale="en-US"
-                      min={minBookingDateTime}
+                      type="text"
+                      placeholder="MM/DD/YYYY HH:MM AM/PM"
+                      readOnly
                       required
                     />
                   </div>

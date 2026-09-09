@@ -1,5 +1,6 @@
 import { connectToDatabase } from "../lib/mongodb.js";
 import { sendEmail, isPublicSenderEmail } from "../lib/brevo.js";
+import { formatTimeAMPM, formatDateUS } from "../lib/format.js";
 
 export const config = {
   api: { bodyParser: { sizeLimit: "1mb" } },
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const appointmentDateTime = `${finalAppointmentDate} at ${finalAppointmentTime}`;
+    const appointmentDateTime = `${formatDateUS(finalAppointmentDate)} at ${formatTimeAMPM(finalAppointmentTime)}`;
 
     const { db } = await connectToDatabase();
 
