@@ -92,7 +92,7 @@ export default async function handler(req, res) {
         <div style="background:#f7f1e7;padding:32px 0;font-family:Arial,Helvetica,sans-serif;color:#31281d;">
           <div style="max-width:620px;margin:0 auto;background:#fffdf9;border:1px solid #e5d7bd;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(49,40,29,0.08);">
             <div style="background:#31281d;padding:22px 28px;display:flex;align-items:center;gap:16px;">
-              <div style="width:46px;height:46px;border-radius:50%;background:#d7b36a;color:#31281d;font-weight:700;font-size:24px;display:flex;align-items:center;justify-content:center;">S</div>
+              <img src="${shopLogoUrl}" alt="Shape Nail Lounge" style="width:46px;height:46px;border-radius:50%;object-fit:contain;background:#fff;padding:4px;" />
               <div>
                 <div style="font-size:12px;letter-spacing:3px;color:#f0e3c3;font-weight:700;">SHAPE</div>
                 <div style="font-size:23px;letter-spacing:2px;color:#fffaf0;font-weight:600;line-height:1.1;">NAIL LOUNGE</div>
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
         <div style="background:#f7f1e7;padding:32px 0;font-family:Arial,Helvetica,sans-serif;color:#31281d;">
           <div style="max-width:620px;margin:0 auto;background:#fffdf9;border:1px solid #e5d7bd;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(49,40,29,0.08);">
             <div style="background:#31281d;padding:22px 28px;display:flex;align-items:center;gap:16px;">
-              <div style="width:46px;height:46px;border-radius:50%;background:#d7b36a;color:#31281d;font-weight:700;font-size:24px;display:flex;align-items:center;justify-content:center;">S</div>
+              <img src="${shopLogoUrl}" alt="Shape Nail Lounge" style="width:46px;height:46px;border-radius:50%;object-fit:contain;background:#fff;padding:4px;" />
               <div>
                 <div style="font-size:12px;letter-spacing:3px;color:#f0e3c3;font-weight:700;">SHAPE</div>
                 <div style="font-size:23px;letter-spacing:2px;color:#fffaf0;font-weight:600;line-height:1.1;">NAIL LOUNGE</div>
